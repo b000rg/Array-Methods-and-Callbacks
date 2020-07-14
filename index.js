@@ -102,11 +102,29 @@ console.log(`Stretch 1: getCountryWins\n${getCountryWins(fifaData, "USA")}`);
 
 /* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
-function getGoals(data) {
-    
-};
+function getWinningTeam(game) {
+    if (game["Home Team Goals"] !== game["Away Team Goals"])
+    return (game["Home Team Goals"] > game["Away Team Goals"]) ? game["Home Team Initials"] : game["Away Team Initials"];
+    else return null;
+}
 
-getGoals();
+function getGoals(data) {
+    let appearances = {}, wins = {}, averages = {};
+    data.forEach(game => {
+        appearances[game["Home Team Initials"]] = (appearances[game["Home Team Initials"]]) ? appearances[game["Home Team Initials"]] + 1 : 1;
+    });
+    data.forEach(game => {
+        let winner = getWinningTeam(game);
+        if (winner) wins[winner] = wins[winner] ? wins[winner] + 1 : 1;
+    });
+    Object.keys(appearances).forEach(team => {
+        averages[team] = wins[team] / appearances[team];
+    });
+    const best = Object.values(averages).sort()[0];
+    return Object.keys(averages)[Object.values(averages).findIndex(value => value === best)];
+}
+
+console.log(`Stretch 3: getGoals\n${getGoals(fifaData)}`);
 
 
 /* Stretch 4: Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
